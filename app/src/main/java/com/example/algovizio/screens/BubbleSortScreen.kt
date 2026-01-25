@@ -1,12 +1,9 @@
 package com.example.algovizio.screens
 
-
-import android.R.attr.enabled
+// If your Compose version is older, you might need this for animation:
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Remove
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -14,17 +11,18 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Remove
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -78,54 +76,93 @@ fun BubbleSortScreen(viewModel: AlgoViewModel = viewModel()) {
 
         )
         Spacer(modifier = Modifier.height(32.dp))
+        Text(
+            "Bars Count: ${viewModel.sortingList.size}",
+            fontSize = 16.sp,
+            fontWeight = FontWeight.Bold,
+            style = MaterialTheme.typography.headlineSmall,
+            color = MaterialTheme.colorScheme.onBackground,
+            modifier = Modifier.padding(bottom = 32.dp)
+
+        )
+        Spacer(modifier = Modifier.height(32.dp))
 
         // 1. THE VISUALIZER (The Bars)
         // We use a Row to place bars side-by-side
-        Row(
+//        Row(
+//            modifier = Modifier
+//                .fillMaxWidth()
+//                .height(300.dp), // Fixed height for the container
+//            horizontalArrangement = Arrangement.SpaceEvenly, // Space them out nicely
+//            verticalAlignment = Alignment.Bottom // Grow bars from the bottom up
+//        ) {
+//            viewModel.sortingList.forEachIndexed { index, value ->
+//                // --- COLOR LOGIC ---
+//                val isBeingCompared = (index == viewModel.jPointer.value || index == viewModel.jPointer.value + 1)
+//                val isAlreadySorted = (index >= viewModel.sortingList.size - viewModel.iPointer.value)
+//
+//                val barColor = when {
+//                    isBeingCompared -> if(!viewModel.ifSwaping.value) Color.Red else Color.DarkGray   // Active "Scanner" pair
+//                    isAlreadySorted -> Color.Green  // Locked in place (Sorted)
+//                    else -> MaterialTheme.colorScheme.primary // Default (Unsorted)
+//                }
+//                Bars(value, barColor)
+//            }
+//        }
+//        var arrange = Arrangement.SpaceEvenly
+//        if(viewModel.sortingList.size > 15){
+//            arrange = Arrangement.spacedBy(12.dp)
+//        }
+        val dynamicSpace = when {
+            viewModel.sortingList.size > 40 -> 2.dp
+            viewModel.sortingList.size > 20 -> 8.dp
+            else -> 16.dp
+        }
+        LazyRow(
+            horizontalArrangement = Arrangement.spacedBy(dynamicSpace),
+            verticalAlignment = Alignment.Bottom,
             modifier = Modifier
                 .fillMaxWidth()
-                .height(300.dp), // Fixed height for the container
-            horizontalArrangement = Arrangement.SpaceEvenly, // Space them out nicely
-            verticalAlignment = Alignment.Bottom // Grow bars from the bottom up
+                .height(300.dp) // Set a fixed height for the sorting area
         ) {
-            viewModel.sortingList.forEachIndexed { index, value ->
-                // Each number is a Box with a specific height
-                // 1. Determine the Color
-//                val barColor = when {
-//                    // Are we looking at this pair right now? -> RED
-//                    index == viewModel.jPointer.value || index == viewModel.jPointer.value + 1 -> Color.Red
-//
-//                    // Is this part already sorted? (Bubble sort locks the end first) -> GREEN
-//                    index >= viewModel.sortingList.size - viewModel.iPointer.value -> Color.Green
-//
-//                    // Default -> YOUR PURPLE
-//                    else -> MaterialTheme.colorScheme.primary
-//                }
-                // --- COLOR LOGIC ---
-                val isBeingCompared = (index == viewModel.jPointer.value || index == viewModel.jPointer.value + 1)
-                val isAlreadySorted = (index >= viewModel.sortingList.size - viewModel.iPointer.value)
 
-                val barColor = when {
-                    isBeingCompared -> if(!viewModel.ifSwaping.value) Color.Red else Color.DarkGray   // Active "Scanner" pair
-                    isAlreadySorted -> Color.Green  // Locked in place (Sorted)
-                    else -> MaterialTheme.colorScheme.primary // Default (Unsorted)
+            // NOTICE: We use 'items' with a 'key'. This is the secret sauce!
+            items(
+                items = viewModel.sortingList,
+                key = { it.id }
+            ) { barData ->
+                // This 'Box' wraps your Bar and Text
+                Box(
+                    modifier = Modifier
+                        .animateItem() // <--- THIS MAKES IT SLIDE!
+                    // If '.animateItem()' is red, try '.animateItemPlacement()'
+                ) {
+                    // Your existing BarItem Composable goes here
+                    // You will need to update BarItem to accept 'barData' instead of just Ints
+                    Bars(
+                        barData = barData,
+                        barColor = barData.color // Pass your new gray/red/green color here
+                    )
                 }
-                Bars(value, barColor)
             }
         }
+
+
         Spacer(modifier = Modifier.height(32.dp))
-         // 2. THE CONTROLS
+        // 2. THE CONTROLS
         Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
 
-            Button(onClick = {
-                viewModel.isSorting.value = true
-                viewModel.startBubbleSort {viewModel.isSorting.value = false}},
+            Button(
+                onClick = {
+                    viewModel.isSorting.value = true
+                    viewModel.startBubbleSort { viewModel.isSorting.value = false }
+                },
                 enabled = !viewModel.isSorting.value
             ) {
                 Text("Start Sort")
             }
 
-            Button(onClick = { viewModel.resetList()}) {
+            Button(onClick = { viewModel.resetList() }) {
                 Text("Reset / Shuffle")
             }
         }

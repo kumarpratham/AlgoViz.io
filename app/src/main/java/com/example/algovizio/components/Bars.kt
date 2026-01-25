@@ -13,27 +13,29 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.algovizio.model.BarItemData
 
 @Composable
-fun Bars(value : Int, barColor : androidx.compose.ui.graphics.Color){
+fun Bars(barData: BarItemData, barColor: Color) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Box(
             modifier = Modifier
-                .width(30.dp)
+                .width(24.dp)
 //                .height((value * 3).dp) // Multiply by 3 to make them taller!
-                .fillMaxHeight((value/100f) *.85f)
+                .fillMaxHeight((barData.value / 100f) * .85f)
                 .background(
                     color = barColor,
                     shape = RoundedCornerShape(topStart = 4.dp, topEnd = 4.dp)
                 )
         )
         Spacer(modifier = Modifier.height(4.dp))
-        Text("$value",
+        Text(
+            "${barData.value}",
             fontSize = 12.sp,
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onBackground
