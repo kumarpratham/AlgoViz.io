@@ -10,6 +10,8 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -20,7 +22,7 @@ import com.example.algovizio.viewmodels.AlgoViewModel
 
 @Composable
 fun AlgorithmSelector(viewModel: AlgoViewModel) {
-    var expanded = androidx.compose.runtime.remember { androidx.compose.runtime.mutableStateOf(false) }
+    val expanded = remember { mutableStateOf(false) }
 
     Surface(
         color = Color(0xFF6200EE).copy(alpha = 0.1f),
@@ -43,7 +45,7 @@ fun AlgorithmSelector(viewModel: AlgoViewModel) {
                 expanded = expanded.value,
                 onDismissRequest = { expanded.value = false }
             ) {
-                SortAlgorithm.values().forEach { algo ->
+                SortAlgorithm.entries.forEach { algo ->
                     DropdownMenuItem(
                         text = { Text(algo.displayName) },
                         onClick = {
