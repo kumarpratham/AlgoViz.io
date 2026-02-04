@@ -6,6 +6,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.algovizio.model.BarItemData
+import com.example.algovizio.model.SortAlgorithm
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -25,7 +26,10 @@ class AlgoViewModel : ViewModel() {
 
     val defaultColor = Color(0xFF6200EE) // Purple
     val activeColor = Color.Gray         // Gray (for swapping)
-    val sortedColor = Color.Green        // Green (for finished)
+    val sortedColor = Color.Green       // Green (for finished)
+    val currMinSelected = Color.Red     // Red (Current Min)
+
+
     val sortingList = mutableStateListOf(
         BarItemData(0, 40, defaultColor),
         BarItemData(1, 90, defaultColor),
@@ -37,6 +41,7 @@ class AlgoViewModel : ViewModel() {
         BarItemData(7, 60, defaultColor),
         BarItemData(8, 50, defaultColor)
     )
+    val selectedAlgorithm = mutableStateOf(SortAlgorithm.BUBBLE)
 
 
     private var sortJob: Job? = null
@@ -46,6 +51,12 @@ class AlgoViewModel : ViewModel() {
         sortJob?.cancel()
         sortJob = viewModelScope.launch {
             bubbleSort()
+        }
+    }
+    fun startSelectionSort(isFinished: () -> Unit) {
+        sortJob?.cancel()
+        sortJob = viewModelScope.launch {
+            selectionSort()
         }
     }
 
@@ -86,6 +97,57 @@ class AlgoViewModel : ViewModel() {
         updateColor(0, sortedColor)
 
     }
+
+    private suspend fun selectionSort() {
+        val n = sortingList.size
+
+        for (i in 0 until n - 1) {
+
+            // 1 Mark current index i
+            var currMin = i
+            updateColor(currMin, currMinSelected)
+
+            // 2️ Scan unsorted part
+            for (j in i + 1 until n) {
+
+                // Highlight element being compared
+                updateColor(j, activeColor)
+                delay(speed.value.toLong())
+
+                if (sortingList[j].value < sortingList[currMin].value) {
+                    // Remove old min highlight (unless it's i)
+                    if (currMin != i) {
+                        updateColor(currMin, defaultColor)
+                    }
+                    currMin = j
+                    updateColor(currMin, currMinSelected)
+                } else {
+                    updateColor(j, defaultColor)
+                }
+            }
+
+            // 3 Swap min with i
+            if (currMin != i) {
+                val temp = sortingList[currMin]
+                sortingList[currMin] = sortingList[i]
+                sortingList[i] = temp
+                countSwap.value++
+            }
+
+            // 4 Lock sorted position
+            updateColor(i, sortedColor)
+
+            // Reset color of swapped element if needed
+            if (currMin != i) {
+                updateColor(currMin, defaultColor)
+            }
+        }
+
+        // 5 Last element is automatically sorted
+        updateColor(n - 1, sortedColor)
+    }
+
+
 
     // Add and Delete BARS
     fun addBar() {

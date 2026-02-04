@@ -31,7 +31,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.algovizio.components.AdjustmentButtons
+import com.example.algovizio.components.AlgorithmSelector
 import com.example.algovizio.components.Bars
+import com.example.algovizio.model.SortAlgorithm
 import com.example.algovizio.viewmodels.AlgoViewModel
 
 @Composable
@@ -57,13 +59,14 @@ fun BubbleSortScreen(viewModel: AlgoViewModel = viewModel()) {
 
             modifier = Modifier.padding(top = 32.dp, bottom = 16.dp) // Spacing from top
         ) {
-            Text(
-                text = "Bubble Sort Visualization",
-                modifier = Modifier.padding(horizontal = 24.dp, vertical = 12.dp), // Inner padding
-                fontWeight = FontWeight.Bold,
-                color = Color(0xFF6200EE), // Dark purple text
-                style = MaterialTheme.typography.titleMedium
-            )
+//            Text(
+//                text = "Bubble Sort Visualization",
+//                modifier = Modifier.padding(horizontal = 24.dp, vertical = 12.dp), // Inner padding
+//                fontWeight = FontWeight.Bold,
+//                color = Color(0xFF6200EE), // Dark purple text
+//                style = MaterialTheme.typography.titleMedium
+//            )
+            AlgorithmSelector(viewModel)
         }
         Spacer(modifier = Modifier.height(32.dp))
         Text(
@@ -155,7 +158,18 @@ fun BubbleSortScreen(viewModel: AlgoViewModel = viewModel()) {
             Button(
                 onClick = {
                     viewModel.isSorting.value = true
-                    viewModel.startBubbleSort { viewModel.isSorting.value = false }
+//                    viewModel.startBubbleSort { viewModel.isSorting.value = false }
+                    when (viewModel.selectedAlgorithm.value) {
+                        SortAlgorithm.BUBBLE ->
+                            viewModel.startBubbleSort {
+                                viewModel.isSorting.value = false
+                            }
+
+                        SortAlgorithm.SELECTION ->
+                            viewModel.startSelectionSort {
+                                viewModel.isSorting.value = false
+                            }
+                    }
                 },
                 enabled = !viewModel.isSorting.value
             ) {
