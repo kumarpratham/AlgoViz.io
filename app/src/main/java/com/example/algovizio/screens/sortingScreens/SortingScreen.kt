@@ -1,4 +1,4 @@
-package com.example.algovizio.screens
+package com.example.algovizio.screens.sortingScreens
 
 // If your Compose version is older, you might need this for animation:
 import androidx.compose.foundation.BorderStroke
@@ -30,14 +30,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import com.example.algovizio.components.AdjustmentButtons
-import com.example.algovizio.components.AlgorithmSelector
 import com.example.algovizio.components.Bars
-import com.example.algovizio.model.SortAlgorithm
+import com.example.algovizio.model.Algorithms
 import com.example.algovizio.viewmodels.AlgoViewModel
 
 @Composable
-fun BubbleSortScreen(viewModel: AlgoViewModel = viewModel()) {
+fun SortingScreen(navController: NavController,viewModel: AlgoViewModel = viewModel(),algorithm : String) {
 
 
     Column(
@@ -59,14 +59,17 @@ fun BubbleSortScreen(viewModel: AlgoViewModel = viewModel()) {
 
             modifier = Modifier.padding(top = 32.dp, bottom = 16.dp) // Spacing from top
         ) {
-//            Text(
-//                text = "Bubble Sort Visualization",
-//                modifier = Modifier.padding(horizontal = 24.dp, vertical = 12.dp), // Inner padding
-//                fontWeight = FontWeight.Bold,
-//                color = Color(0xFF6200EE), // Dark purple text
-//                style = MaterialTheme.typography.titleMedium
-//            )
-            AlgorithmSelector(viewModel)
+//            val algo = when(algorithm){
+//                items[0].second -> items[0].first
+//                items[1].second -> items[1].first
+//                else -> ""
+//            }
+            val items = Algorithms.sortingAlgorithms
+            val algo = items.find { it.second == algorithm }?.first ?: ""
+            Text(
+                text = "Sorting Algorithm: $algo",
+                fontSize = 20.sp,
+            )
         }
         Spacer(modifier = Modifier.height(32.dp))
         Text(
@@ -159,13 +162,13 @@ fun BubbleSortScreen(viewModel: AlgoViewModel = viewModel()) {
                 onClick = {
                     viewModel.isSorting.value = true
 //                    viewModel.startBubbleSort { viewModel.isSorting.value = false }
-                    when (viewModel.selectedAlgorithm.value) {
-                        SortAlgorithm.BUBBLE ->
+                    when (algorithm) {
+                        "bubble" ->
                             viewModel.startBubbleSort {
                                 viewModel.isSorting.value = false
                             }
 
-                        SortAlgorithm.SELECTION ->
+                        "selection" ->
                             viewModel.startSelectionSort {
                                 viewModel.isSorting.value = false
                             }
