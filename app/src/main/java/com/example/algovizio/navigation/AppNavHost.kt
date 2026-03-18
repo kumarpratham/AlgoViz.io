@@ -11,6 +11,7 @@ import com.example.algovizio.screens.MainPageScreen
 import com.example.algovizio.screens.sortingScreens.MainSortingScreen
 import com.example.algovizio.screens.sortingScreens.SortingScreen
 import com.example.algovizio.screens.treeScreens.MainTreeScreen
+import com.example.algovizio.screens.treeScreens.TreeScreen
 
 
 @Composable
@@ -52,6 +53,23 @@ fun AppNavHost() {
         composable(Routes.TREE_MAIN) {
             MainTreeScreen(navController)
         }
+        // Tree visualizer
+        composable(
+//            TreeScreen(navController)
+
+            route = "${Routes.TREE_VISUALIZER}/{algorithm}",
+            arguments = listOf(
+                navArgument("algorithm") { type = NavType.StringType }
+            )
+        ) { backStackEntry ->
+
+            val algorithm = backStackEntry.arguments?.getString("algorithm") ?: ""
+
+            TreeScreen(
+                navController = navController,
+                algorithm = algorithm
+            )
+        }
     }
 }
 
@@ -65,10 +83,10 @@ startDestination = Profile
         ProfileScreen(
             onNavigateToFriends = { navController.navigate(route = FriendsList) },
             */
-                /*...*//*
+/*...*//*
         )
     }
     composable<FriendsList> { FriendsListScreen(*/
-                    /*...*//*
+/*...*//*
     ) }
 }*/

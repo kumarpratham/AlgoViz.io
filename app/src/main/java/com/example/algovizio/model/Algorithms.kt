@@ -11,6 +11,8 @@ object Algorithms {
         " Algorithms" to "TREE_MAIN"
     )
 
+
+    //  SORTING ALGORITHM
     val sortingAlgorithms = listOf(
         "Bubble Sort" to "bubble",
         "Selection Sort" to "selection",
@@ -22,10 +24,21 @@ object Algorithms {
         "Radix Sort" to "radix",
         "Counting Sort" to "counting"
         )
+    // Tree ALGORITHM
+    val treeAlgorithms = listOf(
+        "BTS" to "bts",
+        "Full Binary Tree" to "full_binary_tree",
+        "Complete Binary Tree" to "complete_binary_tree",
+        "AVL Tree" to "avl_tree",
+        "Red Black Tree" to "red_black_tree",
+        "Trie" to "trie",
+        "Segment Tree" to "segment_tree",
+        "Binary Indexed Tree" to "binary_indexed_tree"
+    )
 
-    val graphAlgorithms = listOf(
-        "DFS" to "dfs",
-        "BFS" to "bfs"
+    // DP ALGORITHM
+    val dpAlgorithms = listOf(
+        "Fibonacci" to "bfs"
     )
 
 }

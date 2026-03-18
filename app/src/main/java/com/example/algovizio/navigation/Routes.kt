@@ -8,4 +8,5 @@ object Routes {
     const val SORTING_VISUALIZER = "sorting_visualizer"
 
     const val TREE_MAIN = "tree_main"
+    const val TREE_VISUALIZER = "tree_visualizer"
 }
